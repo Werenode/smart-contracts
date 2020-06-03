@@ -1,1 +1,1 @@
-# fv-manifests
+# smart-contracts
