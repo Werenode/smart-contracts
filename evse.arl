@@ -1,0 +1,71 @@
+archetype evse
+
+variable admin : role = @tz1ZXf37ZNfVupt5GVyrPJ76q8kbjFuD2z7R
+variable admin_candidate : role = @tz1ZXf37ZNfVupt5GVyrPJ76q8kbjFuD2z7R
+
+// EVSE DATA
+
+constant evse_id : string = "EVSE_000000001"
+variable gps : string = "0, 0"
+
+// MANAGER
+variable evse_mng_url : string = "https://werenode.evsemanager.com"
+variable evse_mng_port : int = 3333
+
+// CHARGE
+variable kwh_price : int option = some(0)
+
+variable price_reference : address option = none
+
+variable power : int = 0
+
+variable total_delivered : int = 0
+
+action set_power (ipower : int) {
+   called by admin
+   effect {
+     power := ipower;
+   }
+}
+
+action incr_total (incr : int) {
+   called by admin
+   require { r0 : incr > 0 }
+   effect {
+     total_delivered += incr;
+   }
+}
+
+action set_manager (url : string, port : int) {
+  called by admin
+  effect {
+    evse_mng_url := url;
+    evse_mng_port := port;
+  }
+}
+
+action set_price (iprice : int option, iprice_ref : address option) {
+   called by admin
+   require {
+     r1: isnone(iprice) and issome(iprice_ref) or
+         issome(iprice) and isnone(iprice_ref)
+   }
+   effect {
+     kwh_price := iprice;
+     price_reference := iprice_ref;
+   }
+}
+
+action transfer_admin (pnew_admin : role) {
+  called by admin
+  effect {
+    admin_candidate := pnew_admin;
+  }
+}
+
+action accept_admin () {
+  called by admin_candidate
+  effect {
+    admin := admin_candidate
+  }
+}
