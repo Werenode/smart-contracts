@@ -18,4 +18,4 @@ The EVSE contract provides:
  ERC20-like token. 
  One difference is that the transfer sets the the approved value to 0.
  
- Contracts are written in [Archetype](http://archetype-lang.org/) for the [Tezos](https://tezos.com/) blockchain.
+ > Contracts are written in [Archetype](http://archetype-lang.org/) for the [Tezos](https://tezos.com/) blockchain.
