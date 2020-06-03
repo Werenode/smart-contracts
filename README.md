@@ -15,6 +15,6 @@ The EVSE contract provides:
  ## Token
  
  ERC20-like token. 
- One difference is that the transfer method sets the approved value to 0.
+ One difference is that the `transferFrom` method sets the `allowance` value to 0.
  
  > Contracts are written in [Archetype](http://archetype-lang.org/) for the [Tezos](https://tezos.com/) blockchain.
