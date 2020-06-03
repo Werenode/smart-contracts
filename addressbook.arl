@@ -32,14 +32,14 @@ action rm_whitelist (iaddr : address) {
 }
 
 action addupdate_evse (ievse_id : string, iscontract : address) {
- effect {
-   if whitelist.contains(caller) then (
-     if not addressbook.contains(caller) then (
-	   addressbook[caller].evses.add({ ievse_id; iscontract })
-) else (
-   evse.update(ievse_id, { scontract = iscontract })
-)
-   )
+  effect {
+    if whitelist.contains(caller) then (
+      if not addressbook.contains(caller) then (
+        addressbook.add({caller; [{ ievse_id; iscontract }]})
+      ) else (
+        evse.update(ievse_id, { scontract = iscontract })
+      )
+    )
   }
 }
 
