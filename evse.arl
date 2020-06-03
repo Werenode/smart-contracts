@@ -5,7 +5,7 @@ variable admin_candidate : role = @tz1ZXf37ZNfVupt5GVyrPJ76q8kbjFuD2z7R
 
 // EVSE DATA
 
-constant evse_id : string = "EVSE_000000001"
+variable evse_id : string = "EVSE_000000001"
 variable gps : string = "0, 0"
 
 // MANAGER
