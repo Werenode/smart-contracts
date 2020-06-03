@@ -2,9 +2,8 @@
 
 ## Address book
 
-Assiciation table between evse id and its contract id. 
-
-Any address whitelisted by the contract admin, may add and update its association.
+Association table between evse id and its contract id. 
+Any address whitelisted by the contract's admin, may add and update its association.
 
 ## EVSE
 
