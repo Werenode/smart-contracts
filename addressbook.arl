@@ -17,21 +17,21 @@ asset whitelist {
  addr : address;
 }
 
-action add_whitelist (iaddr : address) {
+entry add_whitelist (iaddr : address) {
  called by admin
  effect {
    whitelist.add({ addr = iaddr})
  }
 }
 
-action rm_whitelist (iaddr : address) {
+entry rm_whitelist (iaddr : address) {
  called by admin
  effect {
    whitelist.remove(iaddr);
  }
 }
 
-action addupdate_evse (ievse_id : string, iscontract : address) {
+entry addupdate_evse (ievse_id : string, iscontract : address) {
   effect {
     if whitelist.contains(caller) then (
       if not addressbook.contains(caller) then (
@@ -43,14 +43,14 @@ action addupdate_evse (ievse_id : string, iscontract : address) {
   }
 }
 
-action delete_evse (ievse_id : string) {
+entry delete_evse (ievse_id : string) {
  effect {
    // is it possible to delete when not whitelisted ?
    addressbook[caller].evses.remove(ievse_id);
  }
 }
 
-action admin_delete_evse (evse_addr : address, ievse_id : string) {
+entry admin_delete_evse (evse_addr : address, ievse_id : string) {
  called by admin
  effect {
     addressbook[evse_addr].evses.remove(ievse_id);
@@ -58,19 +58,16 @@ action admin_delete_evse (evse_addr : address, ievse_id : string) {
 }
 
 
-action transfer_admin (pnew_admin : role) {
+entry transfer_admin (pnew_admin : role) {
  called by admin
  effect {
    admin_candidate := pnew_admin;
  }
 }
 
-action accept_admin () {
+entry accept_admin () {
  called by admin_candidate
  effect {
    admin := admin_candidate
  }
 }
-
-
-
