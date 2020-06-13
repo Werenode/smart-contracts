@@ -22,7 +22,7 @@ asset tokenHolder identified by holder {
   { holder = caller; tokens = total }
 }
 
-action dotransfer (dest : pkey of tokenHolder, value : int) {
+entry dotransfer (dest : pkey of tokenHolder, value : int) {
 
   specification {
     p1 : before.tokenHolder.sum(tokens) = tokenHolder.sum(tokens);
@@ -47,7 +47,7 @@ action dotransfer (dest : pkey of tokenHolder, value : int) {
 
   failif {
     f0 : value < 0;
-    f1 : tokenHolder.get(caller).tokens < value
+    f1 : tokenHolder[caller].tokens < value
   }
 
   effect {
@@ -56,22 +56,22 @@ action dotransfer (dest : pkey of tokenHolder, value : int) {
   }
 }
 
-action approve(spender : address, value : int) {
+entry approve(spender : address, value : int) {
   effect {
     allowance.addupdate(caller, { evse_server = spender; amount = value });
   }
 }
 
-action transferFrom(from_ : address, to_ : address, value : int) {
+entry transferFrom(from_ : address, to_ : address, value : int) {
   require {
     (* d1: allowance.contains(from_); *)
-    d2: allowance.get(from_).evse_server = caller;
-    d3: allowance.get(from_).amount >= value;
+    d2: allowance[from_].evse_server = caller;
+    d3: allowance[from_].amount >= value;
   }
 
   failif {
     f3 : value < 0;
-    f4 : tokenHolder.get(from_).tokens < value
+    f4 : tokenHolder[from_].tokens < value
   }
 
   effect {
