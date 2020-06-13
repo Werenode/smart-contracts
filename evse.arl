@@ -5,29 +5,40 @@ variable admin_candidate : role = @tz1ZXf37ZNfVupt5GVyrPJ76q8kbjFuD2z7R
 
 // EVSE DATA
 
-variable gps : string = "0, 0"
+variable gps : string = "47.6818989,2.7376169999999997"
 
 // MANAGER
 variable evse_mng_url : string = "https://werenode.evsemanager.com"
 variable evse_mng_port : int = 3333
 
-// CHARGE
-variable kwh_price : int option = some(0)
+// CHARGE in WR TOKENs
+variable kwh_price : int option = some(2)
 
 variable price_reference : address option = none
 
-variable power : int = 0
+variable power : int = 11
 
 variable total_delivered : int = 0
 
-action set_power (ipower : int) {
+// PLUG TYPES
+variable hasType1MaleACCable: bool = false
+variable hasType2MaleACCable: bool = false
+variable hasType2FemaleAC: bool = false
+variable hasType3FemaleAC: bool = false
+variable hasTeslaMaleAC: bool = false
+variable hasTeslaFemaleAC: bool = false
+variable hasType2ComboMaleDC: bool = false
+variable hasTeslaDC: bool = false
+variable hasDomesticFemaleEF: bool = false
+
+entry set_power (ipower : int) {
    called by admin
    effect {
      power := ipower;
    }
 }
 
-action incr_total (incr : int) {
+entry incr_total (incr : int) {
    called by admin
    require { r0 : incr > 0 }
    effect {
@@ -35,7 +46,7 @@ action incr_total (incr : int) {
    }
 }
 
-action set_manager (url : string, port : int) {
+entry set_manager (url : string, port : int) {
   called by admin
   effect {
     evse_mng_url := url;
@@ -43,7 +54,7 @@ action set_manager (url : string, port : int) {
   }
 }
 
-action set_price (iprice : int option, iprice_ref : address option) {
+entry set_price (iprice : int option, iprice_ref : address option) {
    called by admin
    require {
      r1: isnone(iprice) and issome(iprice_ref) or
@@ -55,14 +66,37 @@ action set_price (iprice : int option, iprice_ref : address option) {
    }
 }
 
-action transfer_admin (pnew_admin : role) {
+entry set_plugtype (itype1MaleACCable: bool,
+                    itype2MaleACCable: bool,
+                    itype2FemaleAC: bool,
+                    itype3FemaleAC: bool,
+                    iteslaMaleAC: bool,
+                    iteslaFemaleAC: bool,
+                    itype2ComboMaleDC: bool,
+                    iteslaDC: bool,
+                    idomesticFemaleEF : bool) {
+  called by admin
+  effect {
+    hasType1MaleACCable := itype1MaleACCable;
+    hasType2MaleACCable := itype2MaleACCable;
+    hasType2FemaleAC := itype2FemaleAC;
+    hasType3FemaleAC := itype3FemaleAC;
+    hasTeslaMaleAC := iteslaMaleAC;
+    hasTeslaFemaleAC := iteslaFemaleAC;
+    hasType2ComboMaleDC := itype2ComboMaleDC;
+    hasTeslaDC := iteslaDC;
+    hasDomesticFemaleEF := idomesticFemaleEF;
+  }
+}
+
+entry transfer_admin (pnew_admin : role) {
   called by admin
   effect {
     admin_candidate := pnew_admin;
   }
 }
 
-action accept_admin () {
+entry accept_admin () {
   called by admin_candidate
   effect {
     admin := admin_candidate
