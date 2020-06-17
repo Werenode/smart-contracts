@@ -57,6 +57,12 @@ entry dotransfer (dest : pkey of tokenHolder, value : int) {
 }
 
 entry approve(spender : address, value : int) {
+  require {
+    d1 : tokenHolder[caller].tokens >= value;
+  }
+  failif {
+    f2 : value <= 0;
+  }
   effect {
     allowance.addupdate(caller, { evse_server = spender; amount = value });
   }
