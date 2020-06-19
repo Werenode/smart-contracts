@@ -21,15 +21,15 @@ variable power : int = 11
 variable total_delivered : int = 0
 
 // PLUG TYPES
-variable hasType1MaleACCable: bool = false
-variable hasType2MaleACCable: bool = false
-variable hasType2FemaleAC: bool = false
-variable hasType3FemaleAC: bool = false
-variable hasTeslaMaleAC: bool = false
-variable hasTeslaFemaleAC: bool = false
-variable hasType2ComboMaleDC: bool = false
-variable hasTeslaDC: bool = false
-variable hasDomesticFemaleEF: bool = false
+variable has_Type_1_Male_AC_Cable: bool = false
+variable has_Type_2_Male_AC_Cable: bool = false
+variable has_Type_2_Female_AC: bool = false
+variable has_Type_3_Female_AC: bool = false
+variable has_Tesla_Male_AC: bool = false
+variable has_Tesla_Female_AC: bool = false
+variable has_Type_2_Combo_Male_DC: bool = false
+variable has_Tesla_DC: bool = false
+variable has_Domestic_Female_EF: bool = false
 
 entry set_power (ipower : int) {
    called by admin
@@ -77,15 +77,15 @@ entry set_plugtype (itype1MaleACCable: bool,
                     idomesticFemaleEF : bool) {
   called by admin
   effect {
-    hasType1MaleACCable := itype1MaleACCable;
-    hasType2MaleACCable := itype2MaleACCable;
-    hasType2FemaleAC := itype2FemaleAC;
-    hasType3FemaleAC := itype3FemaleAC;
-    hasTeslaMaleAC := iteslaMaleAC;
-    hasTeslaFemaleAC := iteslaFemaleAC;
-    hasType2ComboMaleDC := itype2ComboMaleDC;
-    hasTeslaDC := iteslaDC;
-    hasDomesticFemaleEF := idomesticFemaleEF;
+    has_Type_1_Male_AC_Cable := itype1MaleACCable;
+    has_Type_2_Male_AC_Cable := itype2MaleACCable;
+    has_Type_2_Female_AC := itype2FemaleAC;
+    has_Type_3_Female_AC := itype3FemaleAC;
+    has_Tesla_Male_AC := iteslaMaleAC;
+    has_Tesla_Female_AC := iteslaFemaleAC;
+    has_Type_2_Combo_Male_DC := itype2ComboMaleDC;
+    has_Tesla_DC := iteslaDC;
+    has_Domestic_Female_EF := idomesticFemaleEF;
   }
 }
 
@@ -102,3 +102,5 @@ entry accept_admin () {
     admin := admin_candidate
   }
 }
+
+
