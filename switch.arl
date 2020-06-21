@@ -1,0 +1,76 @@
+archetype switch
+
+variable owner : address = @tz1XZ7s6uStC2hZVpPQhXgcdXPwxifByF3Ao
+
+variable interruption : date = 2020-06-18
+
+variable rate : rational = 1.2 // in time_unit / tez_unit
+
+variable time_unit : duration = 1h
+variable tez_unit : tez = 1tz
+
+variable user : address option = none
+
+variable read_interval : duration = 5s
+
+// CASTS
+
+function rat_to_dur(x : rational) : duration {
+    return (x * 1s)
+}
+
+// UTILS
+function get_rate_in_s_by_utz () : rational {
+    var d : int = time_unit;
+    var t : int = tez_unit;
+    return (rate * d / t)
+}
+
+function get_return_tz () : tez {
+    var res : int = 1 / get_rate_in_s_by_utz() * (interruption - now);
+    return (res * 1utz)
+}
+
+// ENTRIES
+entry start () {
+    require {
+        r1: now > interruption;
+    }
+    effect {
+        var t : int = transferred;
+        var dur : duration = rat_to_dur(get_rate_in_s_by_utz() * t);
+        if dur > read_interval then (
+            interruption := now + dur + read_interval;
+            user := some(caller)
+        )
+    }
+}
+
+entry interrupt () {
+    require {
+        r2: caller = getopt(user) and now < interruption
+    }
+    effect {
+        transfer (get_return_tz()) to caller;
+        interruption := now - read_interval;
+    }
+}
+
+entry collect () {
+    called by owner
+    effect {
+        var keep = 0tz;
+        if now < interruption then
+            keep := get_return_tz();
+        if balance - keep > 0tz then
+            transfer (balance - keep) to owner
+    }
+}
+
+entry setunits (dunit : duration, tunit : tez) {
+    called by owner
+    effect {
+        time_unit := dunit;
+        tez_unit := tunit;
+    }
+}
