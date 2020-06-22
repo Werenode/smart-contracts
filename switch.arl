@@ -13,12 +13,6 @@ variable user : address option = none
 
 variable read_interval : duration = 5s
 
-// CASTS
-
-function rat_to_dur(x : rational) : duration {
-    return (x * 1s)
-}
-
 // UTILS
 function get_rate_in_s_by_utz () : rational {
     var d : int = time_unit;
@@ -38,7 +32,7 @@ entry start () {
     }
     effect {
         var t : int = transferred;
-        var dur : duration = rat_to_dur(get_rate_in_s_by_utz() * t);
+        var dur : duration = (get_rate_in_s_by_utz() * t)*1s;
         if dur > read_interval then (
             interruption := now + dur + read_interval;
             user := some(caller)
