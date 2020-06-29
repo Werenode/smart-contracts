@@ -5,7 +5,10 @@ variable admin_candidate : role = @tz1ZXf37ZNfVupt5GVyrPJ76q8kbjFuD2z7R
 
 asset evse {
  evse_id : string;
- scontract : address;
+ evse_addr : address;
+ evse_mng_url : string;
+ evse_mng_port : int;
+ evse_owner : address;
 }
 
 asset addressbook {
@@ -31,13 +34,15 @@ entry rm_whitelist (iaddr : address) {
  }
 }
 
-entry addupdate_evse (ievse_id : string, iscontract : address) {
+entry addupdate_evse (ievse_id : string, ievse_addr : address, ievse_mngurl : string, ievse_mngport : int, ievse_owner : address) {
   effect {
     if whitelist.contains(caller) then (
       if not addressbook.contains(caller) then (
-        addressbook.add({caller; [{ ievse_id; iscontract }]})
+        addressbook.add({caller; [{ ievse_id; ievse_addr; ievse_mngurl; ievse_mngport; ievse_owner }]})
+      ) else if addressbook[caller].evses.contains(ievse_id) then (
+        evse.update(ievse_id, { evse_addr = ievse_addr; evse_mng_url = ievse_mngurl; evse_mng_port = ievse_mngport; evse_owner = ievse_owner })
       ) else (
-        evse.update(ievse_id, { scontract = iscontract })
+        addressbook[caller].evses.add({ ievse_id; ievse_addr; ievse_mngurl; ievse_mngport; ievse_owner })
       )
     )
   }
@@ -50,10 +55,10 @@ entry delete_evse (ievse_id : string) {
  }
 }
 
-entry admin_delete_evse (evse_addr : address, ievse_id : string) {
+entry admin_delete_evse (ievse_admin : address, ievse_id : string) {
  called by admin
  effect {
-    addressbook[evse_addr].evses.remove(ievse_id);
+    addressbook[ievse_admin].evses.remove(ievse_id);
  }
 }
 
