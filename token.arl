@@ -1,14 +1,15 @@
-archetype token
+archetype wrctoken
 
-constant total : int = 1000000
+constant total : int = 1000000000000000
+variable unit : int = 1000000
 with {
   i0: total > 0
 }
 
 asset allowance {
-  user        : address;
-  evse_server : address;
-  amount      : int;
+  allower     : address;
+  spender     : address;
+  amount      : int = 0;
 } with {
   i2 : amount > 0;
 }
@@ -24,27 +25,6 @@ asset tokenHolder identified by holder {
 
 entry dotransfer (dest : pkey of tokenHolder, value : int) {
 
-  specification {
-    p1 : before.tokenHolder.sum(tokens) = tokenHolder.sum(tokens);
-    p2 : let some th = tokenHolder.get(dest) in
-         let some bth = before.tokenHolder.get(dest) in
-         th.tokens = bth.tokens + value
-         otherwise true
-         otherwise true;
-    p3 : let some thc = tokenHolder.get(caller) in
-         let some bthc = before.tokenHolder.get(caller) in
-         thc.tokens = bthc.tokens - value
-         otherwise true
-         otherwise true;
-    p4 : let some th = tokenHolder.get(dest) in
-         forall t in tokenHolder,
-         forall bt in before.tokenHolder,
-         t.holder <> th.holder ->
-         t.holder <> caller ->
-         t.tokens = bt.tokens
-         otherwise true;
-  }
-
   failif {
     f0 : value < 0;
     f1 : tokenHolder[caller].tokens < value
@@ -56,7 +36,41 @@ entry dotransfer (dest : pkey of tokenHolder, value : int) {
   }
 }
 
-entry approve(spender : address, value : int) {
+entry dotransferfromsource (dest : pkey of tokenHolder, value : int) {
+
+  /*specification {
+    p1 : before.tokenHolder.sum(tokens) = tokenHolder.sum(tokens);
+    p2 : let some th = tokenHolder[dest] in
+         let some bth = before.tokenHolder[dest] in
+         th.tokens = bth.tokens + value
+         otherwise true
+         otherwise true;
+    p3 : let some thc = tokenHolder[source] in
+         let some bthc = before.tokenHolder[source] in
+         thc.tokens = bthc.tokens - value
+         otherwise true
+         otherwise true;
+    p4 : let some th = tokenHolder[dest] in
+         forall t in tokenHolder,
+         forall bt in before.tokenHolder,
+         t.holder <> th.holder ->
+         t.holder <> source ->
+         t.tokens = bt.tokens
+         otherwise true;
+  }*/
+
+  failif {
+    f00 : value < 0;
+    f10 : tokenHolder[source].tokens < value
+  }
+
+  effect {
+    tokenHolder.addupdate( dest, { tokens += value });
+    tokenHolder.update( source, { tokens -= value })
+  }
+}
+
+entry approve(ispender : address, value : int) {
   require {
     d1 : tokenHolder[caller].tokens >= value;
   }
@@ -64,14 +78,14 @@ entry approve(spender : address, value : int) {
     f2 : value <= 0;
   }
   effect {
-    allowance.addupdate(caller, { evse_server = spender; amount = value });
+    allowance.addupdate(caller, { spender = ispender; amount += value });
   }
 }
 
 entry transferFrom(from_ : address, to_ : address, value : int) {
   require {
     (* d1: allowance.contains(from_); *)
-    d2: allowance[from_].evse_server = caller;
+    d2: allowance[from_].spender = caller;
     d3: allowance[from_].amount >= value;
   }
 
