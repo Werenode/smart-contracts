@@ -4,35 +4,60 @@ variable owner : address = @tz1XZ7s6uStC2hZVpPQhXgcdXPwxifByF3Ao
 
 variable interruption : date = 2020-06-18
 
-variable rate : rational = 1.2 // in time_unit / tez_unit
+// TOKEN
+contract token_sig {
+  entry dotransfer(dest : address, value : int)
+  entry dotransferfromsource(dest : address, value : int)
+  entry approve(ispender : address, value : int)
+  entry transferFrom(from_ : address, to_ : address, value : int)
+}
+
+variable token : token_sig = @KT1EPnCh6pRja8FwHeDEQ1stq75EigXKNsRM
+
+// RATES IN TIME_UNIT / MONEY UNIT
+variable tz_rate : rational = 1.2
+variable tk_rate : rational = 0.75
 
 variable time_unit : duration = 1h
-variable tez_unit : tez = 1tz
+variable tz_unit : tez = 1tz
+variable tk_unit : int = 1000000
 
 variable user : address option = none
 
 variable read_interval : duration = 5s
 
 // UTILS
-function get_rate_in_s_by_utz () : rational {
+
+function get_tz_rate () : rational {
     var d : int = time_unit;
-    var t : int = tez_unit;
-    return (rate * d / t)
+    var t : int = tz_unit;
+    return (tz_rate * d / t)
+}
+
+function get_token_rate () : rational {
+    var d : int = time_unit;
+    return (tk_rate * d / tk_unit)
 }
 
 function get_return_tz () : tez {
-    var res : int = 1 / get_rate_in_s_by_utz() * (interruption - now);
+    var res : int = 1 / get_tz_rate() * (interruption - now);
     return (res * 1utz)
 }
 
+function get_return_tk () : int {
+    var res : int = 1 / get_token_rate() * (interruption - now);
+    return res
+}
+
 // ENTRIES
-entry start () {
+
+entry start_with_tz () {
     require {
         r1: now > interruption;
     }
     effect {
         var t : int = transferred;
-        var dur : duration = (get_rate_in_s_by_utz() * t)*1s;
+        var dur : duration = get_tz_rate() * t * 1s;
         if dur > read_interval then (
             interruption := now + dur + read_interval;
             user := some(caller)
@@ -40,9 +65,24 @@ entry start () {
     }
 }
 
-entry interrupt () {
+entry start_with_tk (amount : int) {
     require {
-        r2: caller = getopt(user) and now < interruption
+        r2: now > interruption;
+        r3: amount > 0;
+    }
+    effect {
+        var dur : duration = get_token_rate() * amount * 1s;
+        if dur > read_interval then (
+            transfer 0tz to token call dotransferfromsource(selfaddress,amount);
+            interruption := now + dur + read_interval;
+            user := some(caller)
+        )
+    }
+}
+
+entry interrupt_for_tz () {
+    require {
+        r4: caller = getopt(user) and now < interruption
     }
     effect {
         transfer (get_return_tz()) to caller;
@@ -50,7 +90,17 @@ entry interrupt () {
     }
 }
 
-entry collect () {
+entry interrupt_for_tk () {
+    require {
+        r5 : caller = getopt(user) and now < interruption
+    }
+    effect {
+        transfer 0tz to token call dotransfer(caller,get_return_tk());
+        interruption := now - read_interval
+    }
+}
+
+entry collect_tz () {
     called by owner
     effect {
         var keep = 0tz;
@@ -61,10 +111,24 @@ entry collect () {
     }
 }
 
-entry setunits (dunit : duration, tunit : tez) {
+entry collect_tk (nbtokens : int) {
+    called by owner
+    effect {
+        var keep = 0;
+        if now < interruption then
+            keep := get_return_tk();
+        if nbtokens - keep > 0 then (
+            var t = nbtokens - keep;
+            transfer 0tz to token call dotransfer(caller,t)
+        )
+    }
+}
+
+entry setunits (dunit : duration, tzunit : tez, tkunit : int) {
     called by owner
     effect {
         time_unit := dunit;
-        tez_unit := tunit;
+        tz_unit := tzunit;
+        tk_unit := tkunit;
     }
 }
