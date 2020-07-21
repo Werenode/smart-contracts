@@ -15,7 +15,6 @@ The EVSE contract provides:
  ## Token
  
  ERC20-like token. 
- One difference is that the `transferFrom` method sets the `allowance` value to 0.
  
  ## Switch
  
