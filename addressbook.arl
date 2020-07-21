@@ -14,7 +14,7 @@ asset evse {
 
 asset addressbook {
  admin_id : address;
- evses : evse partition;
+ evses : partition<evse>;
 }
 
 asset whitelist {
