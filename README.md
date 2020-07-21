@@ -5,25 +5,25 @@
 Association table between evse id and its contract id. 
 Any address whitelisted by the contract's admin, may add and update its association.
 
-## EVSE
+### EVSE
 
 The EVSE contract provides:
  * EVSE manager URL
  * Pricing info
  * Charge info
  
- ## Token
+ ### Token
  
  ERC20-like token. 
  
- ## Switch
+ ### Switch
  
  Switches on and off an EVSE. Payments are done tez or WRC token.
  Demo available at:
  * [wallet](http://34.253.184.235/ui)
  * [connected object](http://3.250.1.82/ui/) (reload if bulb not loading properly)
  
- ## Consensus
+ ### Consensus
  
  Anchors a consensus for a numerical value.
  
