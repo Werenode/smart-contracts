@@ -1,7 +1,7 @@
 archetype wrctoken
 
 constant total : int = 1000000000000000
-variable unit : int = 1000000
+variable onetoken : int = 1000000
 with {
   i0: total > 0
 }
@@ -23,7 +23,7 @@ asset tokenHolder identified by holder {
   { holder = caller; tokens = total }
 }
 
-entry dotransfer (dest : pkey of tokenHolder, value : int) {
+entry dotransfer (dest : pkey<tokenHolder>, value : int) {
 
   failif {
     f0 : value < 0;
@@ -36,7 +36,7 @@ entry dotransfer (dest : pkey of tokenHolder, value : int) {
   }
 }
 
-entry dotransferfromsource (dest : pkey of tokenHolder, value : int) {
+entry dotransferfromsource (dest : pkey<tokenHolder>, value : int) {
 
   /*specification {
     p1 : before.tokenHolder.sum(tokens) = tokenHolder.sum(tokens);
