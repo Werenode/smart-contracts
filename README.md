@@ -17,4 +17,15 @@ The EVSE contract provides:
  ERC20-like token. 
  One difference is that the `transferFrom` method sets the `allowance` value to 0.
  
+ ## Switch
+ 
+ Switches on and off an EVSE. Payments are done tez or WRC token.
+ Demo available at:
+ * [wallet](http://34.253.184.235/ui)
+ * [connected object](http://3.250.1.82/ui/) (reload if bulb not loading properly)
+ 
+ ## Consensus
+ 
+ Anchors a consensus for a numerical value.
+ 
  > Contracts are written in [Archetype](http://archetype-lang.org/) for the [Tezos](https://tezos.com/) blockchain.
