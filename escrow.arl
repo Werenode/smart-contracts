@@ -7,9 +7,7 @@ asset allowance identified by addr_owner addr_spender to big_map {
 }
 
 entry %transfer (%from : address, %to : address, value : tez) {
-  require {
-    r1 : balance >= value and transferred = 0
-  }
+  refuse transfer
   effect {
     var current = allowance[(%from, caller)].amount;
     dofailif(current < value, ("NotEnoughAllowance", ((value, current))));
