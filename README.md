@@ -14,7 +14,15 @@ The EVSE contract provides:
  
  ## Token
  
- ERC20-like token. 
+ [FA1.2](https://assets.tqtezos.com/docs/token-contracts/fa12/1-fa12-intro/)-like token.
+ 
+ There are two differences compared to FA1.2:
+ * `transfer` sets allowance to 0
+ * `approve` fails if not enough tokens
+ 
+ ## Escrow
+ 
+ Multi-tenant escrow process with allowance mechanism.
  
  ## Switch
  
