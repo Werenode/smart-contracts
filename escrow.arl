@@ -1,0 +1,41 @@
+archetype escrow
+
+asset allowance identified by addr_owner addr_spender to big_map {
+  addr_owner       : address;
+  addr_spender     : address;
+  amount           : tez = 0tz;
+}
+
+entry %transfer (%from : address, %to : address, value : tez) {
+  require {
+    r1 : balance >= value and transferred = 0
+  }
+  effect {
+    var current = allowance[(%from, caller)].amount;
+    dofailif(current < value, ("NotEnoughAllowance", ((value, current))));
+    transfer value to %to;
+    if current > value then
+      transfer (current - value) to %from;
+    allowance.update((%from, caller), { amount = 0tz });
+  }
+}
+
+entry approve (spender : address) {
+  allowance.addupdate((caller, spender), { amount += transferred });
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SPECIFICATION
+///////////////////////////////////////////////////////////////////////////////
+
+specification {
+  s1: balance = allowance.sum(amount);
+}
+
+specification entry %transfer (%from : address, %to : address, value : tez) {
+  postcondition transfer_p1 {
+    let some before_allowance = before.allowance[(%from,caller)] in
+    balance = before.balance - before_allowance.amount
+    otherwise false
+  }
+}
