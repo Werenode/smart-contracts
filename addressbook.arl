@@ -4,94 +4,84 @@ variable admin : role = @tz1ZXf37ZNfVupt5GVyrPJ76q8kbjFuD2z7R
 variable admin_candidate : role = @tz1ZXf37ZNfVupt5GVyrPJ76q8kbjFuD2z7R
 
 asset evse {
- evse_id : string;
- evse_addr : address;
- evse_mng_addr : address;
- evse_mng_url : string;
- evse_mng_port : int;
- evse_owner : address;
+  evse_id    : string;
+  evse_addr  : address;
+  evse_mng   : address;
+  evse_owner : address;
 }
 
-asset addressbook {
- admin_id : address;
- evses : partition<evse>;
+asset evsemanager {
+  mng_addr : address;
+  mng_url  : string;
+  mng_port : nat;
+  evses    : aggregate<evse> = [];
+}
+
+asset owner {
+  owner_addr  : address;
+  owner_evses : aggregate<evse> = [];
 }
 
 asset whitelist {
- addr : address;
+  addr : address;
 }
 
 entry add_whitelist (iaddr : address) {
- called by admin
- effect {
-   whitelist.add({ addr = iaddr})
- }
-}
-
-entry rm_whitelist (iaddr : address) {
- called by admin
- effect {
-   whitelist.remove(iaddr);
- }
-}
-
-entry addupdate_evse (ievse_id : string,
-                      ievse_addr : address,
-                      ievse_mng_addr : address,
-                      ievse_mngurl : string,
-                      ievse_mngport : int,
-                      ievse_owner : address) {
+  called by admin
   effect {
-    if whitelist.contains(caller) then (
-      if not addressbook.contains(caller) then (
-        addressbook.add({caller; [{ ievse_id;
-                                    ievse_addr;
-                                    ievse_mng_addr;
-                                    ievse_mngurl;
-                                    ievse_mngport;
-                                    ievse_owner }]})
-      ) else if addressbook[caller].evses.contains(ievse_id) then (
-        evse.update(ievse_id, { evse_addr = ievse_addr;
-                                evse_mng_url = ievse_mngurl;
-                                evse_mng_port = ievse_mngport;
-                                evse_owner = ievse_owner })
-      ) else (
-        addressbook[caller].evses.add({ ievse_id;
-                                        ievse_addr;
-                                        ievse_mng_addr;
-                                        ievse_mngurl;
-                                        ievse_mngport;
-                                        ievse_owner })
-      )
-    )
+    whitelist.add({ addr = iaddr})
   }
 }
 
-entry delete_evse (ievse_id : string) {
- effect {
-   // is it possible to delete when not whitelisted ?
-   addressbook[caller].evses.remove(ievse_id);
- }
+entry rm_whitelist (iaddr : address) {
+  called by admin
+  effect {
+    whitelist.remove(iaddr);
+  }
 }
 
-entry admin_delete_evse (ievse_admin : address, ievse_id : string) {
- called by admin
- effect {
-    addressbook[ievse_admin].evses.remove(ievse_id);
- }
+entry addupdate_evse (id     : string,
+                      iaddr  : address,
+                      imng   : address,
+                      iurl   : string,
+                      iport  : nat,
+                      iowner : address) {
+  require {
+    r1 : whitelist.contains(caller)
+  }
+  effect {
+    if evse.contains(id) then (
+      evse.remove(id);
+      evsemanager[imng].evses.remove(id);
+      owner[iowner].owner_evses.remove(id);
+    );
+    evse.addupdate(id, { evse_addr = iaddr; evse_mng = imng; evse_owner = iowner });
+    evsemanager.addupdate(imng, { mng_url = iurl; mng_port = iport; evses += [ id ] });
+    owner.addupdate(iowner, { owner_evses += [ id ] })
+  }
 }
 
+entry delete_evse (id : string) {
+  require {
+    r2 : whitelist.contains(caller) or caller = admin
+  }
+  effect {
+    evsemanager[evse[id].evse_mng].evses.remove(id);
+    owner[evse[id].evse_owner].owner_evses.remove(id);
+    evse.remove(id);
+  }
+}
 
 entry transfer_admin (pnew_admin : role) {
- called by admin
- effect {
-   admin_candidate := pnew_admin;
- }
+  called by admin
+  effect {
+    admin_candidate := pnew_admin;
+  }
 }
 
 entry accept_admin () {
- called by admin_candidate
- effect {
-   admin := admin_candidate
- }
+  called by admin_candidate
+  effect {
+    admin := admin_candidate
+  }
 }
