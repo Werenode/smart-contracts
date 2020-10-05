@@ -86,7 +86,7 @@ specification entry %transfer (%from : address, %to : address, value : nat) {
     let some before_ledger_from = before.ledger[%from] in
     let some after_ledger_from  = ledger[%from] in
     after_ledger_from = { before_ledger_from with
-      tokens = (before_ledger_from.tokens - value)
+      tokens = abs (before_ledger_from.tokens - value)
     }
     otherwise false otherwise false
   }
