@@ -1,4 +1,6 @@
-archetype consensig
+/* Copyright (C) 2020 Werenode SAS  */
+
+archetype consensus
 
 variable admin : role = @tz1ZXf37ZNfVupt5GVyrPJ76q8kbjFuD2z7R
 

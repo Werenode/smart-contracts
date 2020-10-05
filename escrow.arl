@@ -1,3 +1,5 @@
+/* Copyright (C) 2020 Werenode SAS  */
+
 archetype escrow
 
 asset allowance identified by addr_owner addr_spender to big_map {

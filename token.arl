@@ -1,4 +1,5 @@
 /* Copyright (C) 2020 Werenode SAS  */
+
 archetype token
 
 constant totalsupply : nat = 1_000_000_000_000_000_000
