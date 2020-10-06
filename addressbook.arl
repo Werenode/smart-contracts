@@ -2,8 +2,8 @@
 
 archetype addressbook
 
-variable admin : role = @tz1ZXf37ZNfVupt5GVyrPJ76q8kbjFuD2z7R
-variable admin_candidate : role = @tz1ZXf37ZNfVupt5GVyrPJ76q8kbjFuD2z7R
+variable admin : role = @tz1TQyYUuFbAroVARwhh5Fgqu2JE9HrvNi3a
+variable admin_candidate : role = @tz1TQyYUuFbAroVARwhh5Fgqu2JE9HrvNi3a
 
 asset evse {
   evse_id    : string;
