@@ -13,6 +13,8 @@ variable currency : nat = 1
 
 variable plugs : set<nat> = [ 1 ]
 
+variable user : option<address> = none
+
 asset service {
   type : nat;
   price : nat;
@@ -53,6 +55,11 @@ entry setcurrency (c : nat) {
   effect {
     currency := c;
   }
+}
+
+entry setuser (u : option<address>) {
+  called by admin
+  effect { user := u; }
 }
 
 entry transfer_admin (pnew_admin : role) {
