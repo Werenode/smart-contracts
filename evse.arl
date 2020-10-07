@@ -13,7 +13,11 @@ variable currency : nat = 1
 
 variable plugs : set<nat> = [ 1 ]
 
-variable user : option<address> = none
+asset users {
+  id : address;
+}
+
+variable state : nat = 0
 
 asset service {
   type : nat;
@@ -57,9 +61,14 @@ entry setcurrency (c : nat) {
   }
 }
 
-entry setuser (u : option<address>) {
+entry adduser (u : address) {
   called by admin
-  effect { user := u; }
+  effect { users.add({ u }); }
+}
+
+entry rmuser (u : address) {
+  called by admin
+  effect { users.remove(u); }
 }
 
 entry transfer_admin (pnew_admin : role) {
