@@ -20,7 +20,7 @@ asset users {
 variable state : nat = 0
 
 asset service {
-  type0 : nat;
+  %type : nat;
   price : nat;
 } initialized by {
   { 1; 2000 }

@@ -2,8 +2,8 @@
 
 archetype addressbook
 
-variable admin : role = @tz1TQyYUuFbAroVARwhh5Fgqu2JE9HrvNi3a
-variable admin_candidate : role = @tz1TQyYUuFbAroVARwhh5Fgqu2JE9HrvNi3a
+variable admin : address = @tz1TQyYUuFbAroVARwhh5Fgqu2JE9HrvNi3a
+variable admin_candidate : address = @tz1TQyYUuFbAroVARwhh5Fgqu2JE9HrvNi3a
 
 asset evse {
   evse_id    : string;
@@ -74,7 +74,7 @@ entry delete_evse (id : string) {
   }
 }
 
-entry transfer_admin (pnew_admin : role) {
+entry transfer_admin (pnew_admin : address) {
   called by admin
   effect {
     admin_candidate := pnew_admin;
