@@ -1,0 +1,90 @@
+/* Copyright (C) 2020-2021 Werenode SAS  */
+
+archetype evse_v2(
+  admin : address,
+  admin_candidate : address = admin,
+// EVSE DATA
+  gps : string)
+
+variable currency : nat = 1
+
+variable plugs : set<nat> = [ 1 ]
+
+variable state : nat = 0
+
+asset users {
+  id : address;
+}
+
+asset service {
+  %type : nat;
+  price : nat;
+} initialized by {
+  { 1; 2000 }
+}
+
+entry addplug (plugid : nat) {
+  called by admin
+  effect {
+    plugs := add(plugs, plugid);
+  }
+}
+
+entry rmplug (plugid : nat) {
+  called by admin
+  effect {
+    plugs := remove(plugs, plugid);
+  }
+}
+
+entry addservice (t : nat, p : nat) {
+  called by admin
+  effect {
+    service.add({ t; p });
+  }
+}
+
+entry rmservice (t : nat) {
+  called by admin
+  effect {
+    service.remove(t);
+  }
+}
+
+entry setcurrency (c : nat) {
+  called by admin
+  effect {
+    currency := c;
+  }
+}
+
+entry setgps (t : string) {
+  called by admin
+  effect {
+    gps := t;
+  }
+}
+
+entry adduser (u : address) {
+  called by admin
+  effect { users.add({ u }); }
+}
+
+entry rmuser (u : address) {
+  called by admin
+  effect { users.remove(u); }
+}
+
+entry transfer_admin (pnew_admin : address) {
+  called by admin
+  effect {
+    admin_candidate := pnew_admin;
+  }
+}
+
+entry accept_admin () {
+  called by admin_candidate
+  effect {
+    admin := admin_candidate
+  }
+}

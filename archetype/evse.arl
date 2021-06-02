@@ -1,9 +1,9 @@
-/* Copyright (C) 2020 Werenode SAS  */
+/* Copyright (C) 2020-2021 Werenode SAS  */
 
 archetype evse
 
-variable admin : role = @tz1XZ7s6uStC2hZVpPQhXgcdXPwxifByF3Ao
-variable admin_candidate : role = @tz1XZ7s6uStC2hZVpPQhXgcdXPwxifByF3Ao
+variable admin : address = @tz1XZ7s6uStC2hZVpPQhXgcdXPwxifByF3Ao
+variable admin_candidate : address = @tz1XZ7s6uStC2hZVpPQhXgcdXPwxifByF3Ao
 
 // EVSE DATA
 
@@ -20,7 +20,7 @@ asset users {
 variable state : nat = 0
 
 asset service {
-  type : nat;
+  type0 : nat;
   price : nat;
 } initialized by {
   { 1; 2000 }
@@ -71,7 +71,7 @@ entry rmuser (u : address) {
   effect { users.remove(u); }
 }
 
-entry transfer_admin (pnew_admin : role) {
+entry transfer_admin (pnew_admin : address) {
   called by admin
   effect {
     admin_candidate := pnew_admin;
