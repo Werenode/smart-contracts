@@ -9,7 +9,7 @@ variable admin_candidate : address = @tz1XZ7s6uStC2hZVpPQhXgcdXPwxifByF3Ao
 
 variable gps : string = "47.6818989,2.7376169999999997"
 
-variable currency : nat = 1
+variable currency : nat = 978 // EUR
 
 variable plugs : set<nat> = [ 1 ]
 

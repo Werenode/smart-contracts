@@ -12,7 +12,7 @@
 # evse WNCooL: KT1SGoBNn5kLbLSi35xWrJWPrzSwVAMcWy1P
 # evse WNPLUG: KT1JWTj5RJQTm9c9HtHWgZKmdXPisT3DCxMw
 # evse WNWine: KT19b6BCikGACdN4uqffgSrwyJ19S2ySjveo
-# evse WNGENA: ???
+# evse WNGENA: KT1KEEGSnag8aTDY9BRb5GJc9m33FbpPWeW5
 #
 # florencenet
 # addressbook: KT1D8w4HpRzQBv49KdjfZCKkNckE5CUHqAY6
@@ -51,7 +51,7 @@ $cli originate ./michelson/token.tz       --named $token_alias --init "(Pair 100
 $cli originate ./michelson/evse.tz        --named $evse_cool_alias --init "(Pair \"$admin\" (Pair \"$admin\" (Pair \"48.775379177873134,2.044936695048847\" (Pair 1 (Pair { 1 } (Pair 0 (Pair { } { Elt 1 2000 })))))))" --force
 $cli originate ./michelson/evse.tz        --named $evse_plug_alias --init "(Pair \"$admin\" (Pair \"$admin\" (Pair \"48.8701025,2.2909664\" (Pair 1 (Pair { 1 } (Pair 0 (Pair { } { Elt 1 2000 })))))))" --force
 $cli originate ./michelson/evse.tz        --named $evse_wine_alias --init "(Pair \"$admin\" (Pair \"$admin\" (Pair \"49.1885924,-0.3609428\" (Pair 1 (Pair { 1 } (Pair 0 (Pair { } { Elt 1 2000 })))))))" --force
-$cli originate ./michelson/evse_v2.tz     --named $evse_gena_alias --init "(Pair \"$admin\" (Pair \"$admin\" (Pair \"48.7605108,2.064785,17\" (Pair 1 (Pair { 1 } (Pair 0 (Pair { } { Elt 1 2000 })))))))" --force
+$cli originate ./michelson/evse_v2.tz      --named $evse_gena_alias --init "(Pair \"$admin\" (Pair \"$admin\" (Pair \"48.76002986544397,2.0647528134929143\" (Pair 978 (Pair { 1 } (Pair 0 (Pair { } { Elt 522 2139 })))))))" --force
 
 evse_cool=`$cli show address $evse_cool_alias`
 evse_plug=`$cli show address $evse_plug_alias`
@@ -69,8 +69,8 @@ $cli call $addressbook_alias --entry addupdate_evse --as $user_wine --with "(\"W
 $cli call $addressbook_alias --entry addupdate_evse --as $user_cool --with "(\"WNGENA\", $evse_gena, $admin, \"https://evsemanager.werenode.com\", 5000, $user_cool)" --force
 
 # Add services
-$cli call $evse_gena_alias --entry addservice --with "(522, 2139)" --force
+#$cli call $evse_gena_alias --entry addservice --with "(522, 2139)" --force
 
 # Transfer WRC to users (maybe useless)
-$cli call $token_alias --entry transfer --with "($admin, $user_cool, 100_000)" --force
-$cli call $token_alias --entry transfer --with "($admin, $user_wine, 100_000)" --force
+#$cli call $token_alias --entry transfer --with "($admin, $user_cool, 100_000)" --force
+#$cli call $token_alias --entry transfer --with "($admin, $user_wine, 100_000)" --force
