@@ -6,7 +6,7 @@ archetype evse_v2(
 // EVSE DATA
   gps : string)
 
-variable currency : nat = 1
+variable currency : nat = 978 // EUR
 
 variable plugs : set<nat> = [ 1 ]
 
