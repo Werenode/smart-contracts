@@ -1,0 +1,8 @@
+archetype logger(const evse_manager : address = tz1TQyYUuFbAroVARwhh5Fgqu2JE9HrvNi3a)
+
+entry charge (evse_id : string, d : duration, amount : nat, payment_id : bytes) {
+  called by evse_manager
+  effect {
+    ()
+  }
+}

@@ -1,0 +1,633 @@
+# (Pair admin (Pair None (Pair 0 (Pair { } (Pair { } { Elt \"\" 0x68747470733a2f2f776572656e6f64652e636f6d2f636f6e7472616374732f61646472657373626f6f6b2e6a736f6e })))))
+{
+parameter (or
+            (list %add_evse (pair (string %pid)
+                                 (pair (address %pmng)
+                                       (pair (address %powner) (bytes %pdata)))))
+            (or
+              (list %update_evse (pair (string %pid)
+                                      (pair (address %pmng)
+                                            (pair (address %powner) (bytes %pdata)))))
+              (or (list %remove_evse string)
+                  (or (pair %addupdate_evsemanager (address %addr) (bytes %server))
+                      (or (address %remove_evsemanager)
+                          (or (address %transfer_admin)
+                              (or (unit %claim_admin) (or (unit %pause) (unit %run)))))))));
+storage (pair (address %admin)
+              (pair (option %admin_candidate address)
+                    (pair (nat %_state)
+                          (pair
+                            (big_map %evse string
+                                           (pair (address %evse_mng)
+                                                 (pair (address %evse_owner)
+                                                       (bytes %evse_data))))
+                            (pair
+                              (map %evsemanager address
+                                                (pair (bytes %mng_server)
+                                                      (set %evses string)))
+                              (big_map %metadata string bytes))))));
+code { UNPAIR ;
+       DIP 1
+            { UNPAIR ; SWAP ; UNPAIR ; SWAP ; UNPAIR ; SWAP ; UNPAIR ; SWAP ; UNPAIR ; SWAP } ;
+       IF_LEFT
+         { DIG 4 ;
+           DUP ;
+           DUG 5 ;
+           PUSH nat 0 ;
+           COMPARE ;
+           NEQ ;
+           IF { PUSH string "InvalidState" ; FAILWITH } {} ;
+           DUP ;
+           ITER { DIG 3 ;
+                  DUP ;
+                  DUG 4 ;
+                  DIG 1 ;
+                  DUP ;
+                  DUG 2 ;
+                  CDR ;
+                  CAR ;
+                  MEM ;
+                  NOT ;
+                  IF
+                    { PUSH string "EVSEMANAGER_NOT_FOUND" ;
+                      DIG 1 ;
+                      DUP ;
+                      DUG 2 ;
+                      CDR ;
+                      CAR ;
+                      PAIR ;
+                      FAILWITH }
+                    {} ;
+                  DIG 4 ;
+                  DUP ;
+                  DUG 5 ;
+                  DIG 1 ;
+                  DUP ;
+                  DUG 2 ;
+                  CAR ;
+                  MEM ;
+                  IF
+                    { PUSH string "KeyExists" ; FAILWITH }
+                    { DIG 4 ;
+                      DUP ;
+                      DUG 5 ;
+                      DIG 1 ;
+                      DUP ;
+                      DUG 2 ;
+                      CDR ;
+                      CDR ;
+                      CDR ;
+                      DIG 2 ;
+                      DUP ;
+                      DUG 3 ;
+                      CDR ;
+                      CDR ;
+                      CAR ;
+                      PAIR ;
+                      DIG 2 ;
+                      DUP ;
+                      DUG 3 ;
+                      CDR ;
+                      CAR ;
+                      PAIR ;
+                      SOME ;
+                      DIG 2 ;
+                      DUP ;
+                      DUG 3 ;
+                      CAR ;
+                      UPDATE ;
+                      DIP 1 { DIG 4 ; DROP 1 } ;
+                      DUG 4 } ;
+                  DIG 4 ;
+                  DUP ;
+                  DUG 5 ;
+                  DIG 1 ;
+                  DUP ;
+                  DUG 2 ;
+                  CAR ;
+                  MEM ;
+                  IF
+                    { DIG 3 ;
+                      DUP ;
+                      DUG 4 ;
+                      DIG 4 ;
+                      DUP ;
+                      DUG 5 ;
+                      DIG 2 ;
+                      DUP ;
+                      DUG 3 ;
+                      CDR ;
+                      CAR ;
+                      GET ;
+                      IF_NONE { PUSH string "NotFound" ; FAILWITH } {} ;
+                      UNPAIR ;
+                      SWAP ;
+                      DROP 1 ;
+                      DIG 5 ;
+                      DUP ;
+                      DUG 6 ;
+                      DIG 3 ;
+                      DUP ;
+                      DUG 4 ;
+                      CDR ;
+                      CAR ;
+                      GET ;
+                      IF_NONE { PUSH string "NotFound" ; FAILWITH } {} ;
+                      CDR ;
+                      PUSH bool True ;
+                      DIG 4 ;
+                      DUP ;
+                      DUG 5 ;
+                      CAR ;
+                      UPDATE ;
+                      SWAP ;
+                      PAIR ;
+                      SOME ;
+                      DIG 2 ;
+                      DUP ;
+                      DUG 3 ;
+                      CDR ;
+                      CAR ;
+                      UPDATE ;
+                      DIP 1 { DIG 3 ; DROP 1 } ;
+                      DUG 3 }
+                    { PUSH string "NotFound" ; FAILWITH } ;
+                  DROP 1 } ;
+           DROP 1 ;
+           SWAP ;
+           PAIR ;
+           SWAP ;
+           PAIR ;
+           SWAP ;
+           PAIR ;
+           SWAP ;
+           PAIR ;
+           SWAP ;
+           PAIR ;
+           NIL operation ;
+           PAIR }
+         { IF_LEFT
+             { DIG 4 ;
+               DUP ;
+               DUG 5 ;
+               PUSH nat 0 ;
+               COMPARE ;
+               NEQ ;
+               IF { PUSH string "InvalidState" ; FAILWITH } {} ;
+               DUP ;
+               ITER { SENDER ;
+                      DIG 8 ;
+                      DUP ;
+                      DUG 9 ;
+                      COMPARE ;
+                      EQ ;
+                      SENDER ;
+                      DIG 2 ;
+                      DUP ;
+                      DUG 3 ;
+                      CDR ;
+                      CDR ;
+                      CAR ;
+                      COMPARE ;
+                      EQ ;
+                      OR ;
+                      NOT ;
+                      IF
+                        { PUSH string "CALLER_NOT_OWNER" ;
+                          DIG 1 ;
+                          DUP ;
+                          DUG 2 ;
+                          CDR ;
+                          CDR ;
+                          CAR ;
+                          PAIR ;
+                          FAILWITH }
+                        {} ;
+                      DIG 3 ;
+                      DUP ;
+                      DUG 4 ;
+                      DIG 1 ;
+                      DUP ;
+                      DUG 2 ;
+                      CDR ;
+                      CAR ;
+                      MEM ;
+                      NOT ;
+                      IF
+                        { PUSH string "EVSEMANAGER_NOT_FOUND" ;
+                          DIG 1 ;
+                          DUP ;
+                          DUG 2 ;
+                          CDR ;
+                          CAR ;
+                          PAIR ;
+                          FAILWITH }
+                        {} ;
+                      DIG 4 ;
+                      DUP ;
+                      DUG 5 ;
+                      DIG 5 ;
+                      DUP ;
+                      DUG 6 ;
+                      DIG 2 ;
+                      DUP ;
+                      DUG 3 ;
+                      CAR ;
+                      GET ;
+                      IF_NONE { PUSH string "NotFound" ; FAILWITH } {} ;
+                      UNPAIR ;
+                      DROP 1 ;
+                      DIG 2 ;
+                      DUP ;
+                      DUG 3 ;
+                      CDR ;
+                      CAR ;
+                      SWAP ;
+                      UNPAIR ;
+                      DROP 1 ;
+                      DIG 3 ;
+                      DUP ;
+                      DUG 4 ;
+                      CDR ;
+                      CDR ;
+                      CAR ;
+                      SWAP ;
+                      DROP 1 ;
+                      DIG 3 ;
+                      DUP ;
+                      DUG 4 ;
+                      CDR ;
+                      CDR ;
+                      CDR ;
+                      SWAP ;
+                      PAIR ;
+                      SWAP ;
+                      PAIR ;
+                      SOME ;
+                      DIG 2 ;
+                      DUP ;
+                      DUG 3 ;
+                      CAR ;
+                      UPDATE ;
+                      DIP 1 { DIG 4 ; DROP 1 } ;
+                      DUG 4 ;
+                      DROP 1 } ;
+               DROP 1 ;
+               SWAP ;
+               PAIR ;
+               SWAP ;
+               PAIR ;
+               SWAP ;
+               PAIR ;
+               SWAP ;
+               PAIR ;
+               SWAP ;
+               PAIR ;
+               NIL operation ;
+               PAIR }
+             { IF_LEFT
+                 { DIG 4 ;
+                   DUP ;
+                   DUG 5 ;
+                   PUSH nat 0 ;
+                   COMPARE ;
+                   NEQ ;
+                   IF { PUSH string "InvalidState" ; FAILWITH } {} ;
+                   DUP ;
+                   ITER { DIG 4 ;
+                          DUP ;
+                          DUG 5 ;
+                          DIG 1 ;
+                          DUP ;
+                          DUG 2 ;
+                          MEM ;
+                          NOT ;
+                          IF
+                            { PUSH string "EVSE_NOT_EXISTS" ; DIG 1 ; DUP ; DUG 2 ; PAIR ; FAILWITH }
+                            {} ;
+                          DIG 4 ;
+                          DUP ;
+                          DUG 5 ;
+                          DIG 1 ;
+                          DUP ;
+                          DUG 2 ;
+                          GET ;
+                          IF_NONE { PUSH string "NotFound" ; FAILWITH } {} ;
+                          CDR ;
+                          CAR ;
+                          SENDER ;
+                          DIG 9 ;
+                          DUP ;
+                          DUG 10 ;
+                          COMPARE ;
+                          EQ ;
+                          SENDER ;
+                          DIG 2 ;
+                          DUP ;
+                          DUG 3 ;
+                          COMPARE ;
+                          EQ ;
+                          OR ;
+                          NOT ;
+                          IF
+                            { PUSH string "CALLER_NOT_EVSE_OWNER" ;
+                              DIG 2 ;
+                              DUP ;
+                              DUG 3 ;
+                              DIG 2 ;
+                              DUP ;
+                              DUG 3 ;
+                              PAIR ;
+                              PAIR ;
+                              FAILWITH }
+                            {} ;
+                          DIG 5 ;
+                          DUP ;
+                          DUG 6 ;
+                          DIG 2 ;
+                          DUP ;
+                          DUG 3 ;
+                          GET ;
+                          IF_NONE { PUSH string "NotFound" ; FAILWITH } {} ;
+                          CAR ;
+                          DIG 5 ;
+                          DUP ;
+                          DUG 6 ;
+                          DIG 1 ;
+                          DUP ;
+                          DUG 2 ;
+                          MEM ;
+                          IF
+                            { DIG 5 ;
+                              DUP ;
+                              DUG 6 ;
+                              DIG 6 ;
+                              DUP ;
+                              DUG 7 ;
+                              DIG 2 ;
+                              DUP ;
+                              DUG 3 ;
+                              GET ;
+                              IF_NONE { PUSH string "NotFound" ; FAILWITH } {} ;
+                              UNPAIR ;
+                              SWAP ;
+                              DROP 1 ;
+                              DIG 7 ;
+                              DUP ;
+                              DUG 8 ;
+                              DIG 3 ;
+                              DUP ;
+                              DUG 4 ;
+                              GET ;
+                              IF_NONE { PUSH string "NotFound" ; FAILWITH } {} ;
+                              CDR ;
+                              PUSH bool False ;
+                              DIG 6 ;
+                              DUP ;
+                              DUG 7 ;
+                              UPDATE ;
+                              SWAP ;
+                              PAIR ;
+                              SOME ;
+                              DIG 2 ;
+                              DUP ;
+                              DUG 3 ;
+                              UPDATE ;
+                              DIP 1 { DIG 5 ; DROP 1 } ;
+                              DUG 5 }
+                            {} ;
+                          DIG 6 ;
+                          DUP ;
+                          DUG 7 ;
+                          NONE (pair address (pair address bytes)) ;
+                          DIG 4 ;
+                          DUP ;
+                          DUG 5 ;
+                          UPDATE ;
+                          DIP 1 { DIG 6 ; DROP 1 } ;
+                          DUG 6 ;
+                          DROP 3 } ;
+                   DROP 1 ;
+                   SWAP ;
+                   PAIR ;
+                   SWAP ;
+                   PAIR ;
+                   SWAP ;
+                   PAIR ;
+                   SWAP ;
+                   PAIR ;
+                   SWAP ;
+                   PAIR ;
+                   NIL operation ;
+                   PAIR }
+                 { IF_LEFT
+                     { UNPAIR ;
+                       SWAP ;
+                       DIG 7 ;
+                       DUP ;
+                       DUG 8 ;
+                       SENDER ;
+                       COMPARE ;
+                       EQ ;
+                       NOT ;
+                       IF { PUSH string "InvalidCaller" ; FAILWITH } {} ;
+                       DIG 5 ;
+                       DUP ;
+                       DUG 6 ;
+                       PUSH nat 0 ;
+                       COMPARE ;
+                       NEQ ;
+                       IF { PUSH string "InvalidState" ; FAILWITH } {} ;
+                       DIG 3 ;
+                       DUP ;
+                       DUG 4 ;
+                       EMPTY_SET string ;
+                       DIG 2 ;
+                       DUP ;
+                       DUG 3 ;
+                       PAIR ;
+                       SOME ;
+                       DIG 3 ;
+                       DUP ;
+                       DUG 4 ;
+                       UPDATE ;
+                       DIP 1 { DIG 3 ; DROP 1 } ;
+                       DUG 3 ;
+                       DROP 2 ;
+                       SWAP ;
+                       PAIR ;
+                       SWAP ;
+                       PAIR ;
+                       SWAP ;
+                       PAIR ;
+                       SWAP ;
+                       PAIR ;
+                       SWAP ;
+                       PAIR ;
+                       NIL operation ;
+                       PAIR }
+                     { IF_LEFT
+                         { DIG 6 ;
+                           DUP ;
+                           DUG 7 ;
+                           SENDER ;
+                           COMPARE ;
+                           EQ ;
+                           NOT ;
+                           IF { PUSH string "InvalidCaller" ; FAILWITH } {} ;
+                           DIG 4 ;
+                           DUP ;
+                           DUG 5 ;
+                           PUSH nat 0 ;
+                           COMPARE ;
+                           NEQ ;
+                           IF { PUSH string "InvalidState" ; FAILWITH } {} ;
+                           DIG 2 ;
+                           DUP ;
+                           DUG 3 ;
+                           NONE (pair bytes (set string)) ;
+                           DIG 2 ;
+                           DUP ;
+                           DUG 3 ;
+                           UPDATE ;
+                           DIP 1 { DIG 2 ; DROP 1 } ;
+                           DUG 2 ;
+                           DROP 1 ;
+                           SWAP ;
+                           PAIR ;
+                           SWAP ;
+                           PAIR ;
+                           SWAP ;
+                           PAIR ;
+                           SWAP ;
+                           PAIR ;
+                           SWAP ;
+                           PAIR ;
+                           NIL operation ;
+                           PAIR }
+                         { IF_LEFT
+                             { DIG 6 ;
+                               DUP ;
+                               DUG 7 ;
+                               SENDER ;
+                               COMPARE ;
+                               EQ ;
+                               NOT ;
+                               IF { PUSH string "InvalidCaller" ; FAILWITH } {} ;
+                               DUP ;
+                               SOME ;
+                               DIP 1 { DIG 5 ; DROP 1 } ;
+                               DUG 5 ;
+                               DROP 1 ;
+                               SWAP ;
+                               PAIR ;
+                               SWAP ;
+                               PAIR ;
+                               SWAP ;
+                               PAIR ;
+                               SWAP ;
+                               PAIR ;
+                               SWAP ;
+                               PAIR ;
+                               NIL operation ;
+                               PAIR }
+                             { IF_LEFT
+                                 { DROP 1 ;
+                                   DIG 4 ;
+                                   DUP ;
+                                   DUG 5 ;
+                                   IF_NONE { PUSH string "NotFound" ; FAILWITH } {} ;
+                                   SENDER ;
+                                   COMPARE ;
+                                   EQ ;
+                                   NOT ;
+                                   IF { PUSH string "InvalidCaller" ; FAILWITH } {} ;
+                                   SENDER ;
+                                   DIP 1 { DIG 5 ; DROP 1 } ;
+                                   DUG 5 ;
+                                   NONE address ;
+                                   DIP 1 { DIG 4 ; DROP 1 } ;
+                                   DUG 4 ;
+                                   SWAP ;
+                                   PAIR ;
+                                   SWAP ;
+                                   PAIR ;
+                                   SWAP ;
+                                   PAIR ;
+                                   SWAP ;
+                                   PAIR ;
+                                   SWAP ;
+                                   PAIR ;
+                                   NIL operation ;
+                                   PAIR }
+                                 { IF_LEFT
+                                     { DROP 1 ;
+                                       DIG 5 ;
+                                       DUP ;
+                                       DUG 6 ;
+                                       SENDER ;
+                                       COMPARE ;
+                                       EQ ;
+                                       NOT ;
+                                       IF
+                                         { PUSH string "InvalidCaller" ; FAILWITH }
+                                         {} ;
+                                       DIG 3 ;
+                                       DUP ;
+                                       DUG 4 ;
+                                       DUP ;
+                                       PUSH nat 0 ;
+                                       COMPARE ;
+                                       EQ ;
+                                       IF
+                                         { PUSH nat 1 ; DIP 1 { DIG 4 ; DROP 1 } ; DUG 4 }
+                                         { PUSH string "InvalidState" ; FAILWITH } ;
+                                       DROP 1 ;
+                                       SWAP ;
+                                       PAIR ;
+                                       SWAP ;
+                                       PAIR ;
+                                       SWAP ;
+                                       PAIR ;
+                                       SWAP ;
+                                       PAIR ;
+                                       SWAP ;
+                                       PAIR ;
+                                       NIL operation ;
+                                       PAIR }
+                                     { DROP 1 ;
+                                       DIG 5 ;
+                                       DUP ;
+                                       DUG 6 ;
+                                       SENDER ;
+                                       COMPARE ;
+                                       EQ ;
+                                       NOT ;
+                                       IF
+                                         { PUSH string "InvalidCaller" ; FAILWITH }
+                                         {} ;
+                                       DIG 3 ;
+                                       DUP ;
+                                       DUG 4 ;
+                                       DUP ;
+                                       PUSH nat 1 ;
+                                       COMPARE ;
+                                       EQ ;
+                                       IF
+                                         { PUSH nat 0 ; DIP 1 { DIG 4 ; DROP 1 } ; DUG 4 }
+                                         { PUSH string "InvalidState" ; FAILWITH } ;
+                                       DROP 1 ;
+                                       SWAP ;
+                                       PAIR ;
+                                       SWAP ;
+                                       PAIR ;
+                                       SWAP ;
+                                       PAIR ;
+                                       SWAP ;
+                                       PAIR ;
+                                       SWAP ;
+                                       PAIR ;
+                                       NIL operation ;
+                                       PAIR } } } } } } } } }
+}
+
