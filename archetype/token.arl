@@ -2,7 +2,7 @@
 
 archetype token
 
-constant totalsupply : nat = 1_000_000_000_000_000_000
+constant totalsupply : nat = 89_000_000_000_000_000
 variable onetoken : nat = 1_000_000
 
 asset allowance identified by addr_owner addr_spender to big_map {
@@ -26,7 +26,7 @@ entry %transfer (%from : address, %to : address, value : nat) {
     if caller <> %from then (
       var current = allowance[(%from, caller)].amount;
       dofailif(current < value, ("NotEnoughAllowance", ((value, current))));
-      allowance.update((%from, caller), { amount =  0 });
+      allowance.update((%from, caller), { amount -= value });
     );
     ledger.update(%from, { tokens -= value });
     ledger.addupdate(%to, { tokens += value });
