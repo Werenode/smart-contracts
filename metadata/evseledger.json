@@ -1,0 +1,10 @@
+{
+  "name": "Werenode EV ledger",
+  "description": "Open Decentralized Electric Vehicle Supply Equipment Ledger",
+  "version": "1.1",
+  "license": "MIT",
+  "authors": [
+    "Werenode team <contact@werenode.com>"
+  ],
+  "homepage": "https://werenode.com"
+}
