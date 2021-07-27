@@ -14,6 +14,7 @@
 # evse WNWine: KT19b6BCikGACdN4uqffgSrwyJ19S2ySjveo
 # evse WNGENA: KT1KEEGSnag8aTDY9BRb5GJc9m33FbpPWeW5
 # evse WNTEST: KT1CfWHWB6JydPP9kaT3C7d3Xc76UHNsV2T2
+# evse WNRoNA: KT1Kfv4R7wQ6KnyJVRYNXZMDSvsVtGPpYbsL
 #
 # florencenet
 # addressbook: KT1D8w4HpRzQBv49KdjfZCKkNckE5CUHqAY6
@@ -32,46 +33,51 @@ admin_alias=werenode_admin
 user_cool_alias=user_cool
 user_wine_alias=user_wine
 
-# addressbook_alias=werenode_addressbook
-# evseledger_alias=werenode_evseledger
-# token_alias=werenode_token
-# evse_cool_alias=werenode_evse_cool
-# evse_plug_alias=werenode_evse_plug
-# evse_wine_alias=werenode_evse_wine
-# evse_gena_alias=werenode_evse_gena
-# evse_test_alias=werenode_evse_test
-
-addressbook_alias=test_werenode_addressbook
+addressbook_alias=werenode_addressbook
 evseledger_alias=werenode_evseledger
-token_alias=test_werenode_token
-evse_cool_alias=test_werenode_evse_cool
-evse_plug_alias=test_werenode_evse_plug
-evse_wine_alias=test_werenode_evse_wine
-evse_gena_alias=test_werenode_evse_gena
-evse_test_alias=test_werenode_evse_test
+token_alias=werenode_token
+evse_cool_alias=werenode_evse_cool
+evse_plug_alias=werenode_evse_plug
+evse_wine_alias=werenode_evse_wine
+evse_gena_alias=werenode_evse_gena
+evse_test_alias=werenode_evse_test
+evse_rona_alias=werenode_evse_rona
+
+#addressbook_alias=test_werenode_addressbook
+#evseledger_alias=werenode_evseledger
+#token_alias=test_werenode_token
+#evse_cool_alias=test_werenode_evse_cool
+#evse_plug_alias=test_werenode_evse_plug
+#evse_wine_alias=test_werenode_evse_wine
+#evse_gena_alias=test_werenode_evse_gena
+#evse_test_alias=test_werenode_evse_test
+#evse_rona_alias=test_werenode_evse_rona
 
 admin=`$cli show address $admin_alias`
 user_cool=`$cli show address $user_cool_alias`
 user_wine=`$cli show address $user_wine_alias`
 
-$cli set endpoint https://florencenet.smartpy.io
+#$cli set endpoint https://florencenet.smartpy.io
+$cli set endpoint https://mainnet.smartpy.io
 $cli set account $admin_alias
 
 # Originate contracts
 #$cli originate ./michelson/addressbook.tz --named $addressbook_alias --init "(Pair \"$admin\" (Pair \"$admin\" (Pair {  } (Pair {  } (Pair {  } (Pair {  } { Elt \"\" 0x68747470733a2f2f776572656e6f64652e636f6d2f636f6e7472616374732f61646472657373626f6f6b2e6a736f6e }))))))" --force
 #$cli originate ./michelson/token.tz       --named $token_alias --init "(Pair 1000000 (Pair {  } (Pair { Elt \"$admin\" 1000000000000000000 } { Elt \"\" 0x68747470733a2f2f776572656e6f64652e636f6d2f636f6e7472616374732f746f6b656e2e6a736f6e })))" --force
-$cli originate ./michelson/evseledger.tz   --named $evseledger_alias --init "(Pair \"$admin\" (Pair None (Pair 0 (Pair { } (Pair { } { Elt \"\" 0x68747470733a2f2f776572656e6f64652e636f6d2f636f6e7472616374732f61646472657373626f6f6b2e6a736f6e })))))" --force
+#$cli originate ./michelson/evseledger.tz   --named $evseledger_alias --init "(Pair \"$admin\" (Pair None (Pair 0 (Pair { } (Pair { } { Elt \"\" 0x68747470733a2f2f776572656e6f64652e636f6d2f636f6e7472616374732f61646472657373626f6f6b2e6a736f6e })))))" --force
 
 # Originate evse contracts
 #$cli originate ./michelson/evse.tz        --named $evse_cool_alias --init "(Pair \"$admin\" (Pair \"$admin\" (Pair \"48.775379177873134,2.044936695048847\" (Pair 1 (Pair { 1 } (Pair 0 (Pair { } { Elt 1 2000 })))))))" --force
 #$cli originate ./michelson/evse.tz        --named $evse_plug_alias --init "(Pair \"$admin\" (Pair \"$admin\" (Pair \"48.8701025,2.2909664\" (Pair 1 (Pair { 1 } (Pair 0 (Pair { } { Elt 1 2000 })))))))" --force
 #$cli originate ./michelson/evse.tz        --named $evse_wine_alias --init "(Pair \"$admin\" (Pair \"$admin\" (Pair \"49.1885924,-0.3609428\" (Pair 1 (Pair { 1 } (Pair 0 (Pair { } { Elt 1 2000 })))))))" --force
 #$cli originate ./michelson/evse_v2.tz     --named $evse_gena_alias --init "(Pair \"$admin\" (Pair \"$admin\" (Pair \"48.76002986544397,2.0647528134929143\" (Pair 978 (Pair { 1 } (Pair 0 (Pair { } { Elt 522 2139 })))))))" --force
+#$cli originate ./michelson/evse_v2.tz     --named $evse_rona_alias --init "(Pair \"$admin\" (Pair \"$admin\" (Pair \"0,0\" (Pair 978 (Pair { 1 } (Pair 0 (Pair { } { Elt 22 214 })))))))" --force
 
 #evse_cool=`$cli show address $evse_cool_alias`
 #evse_plug=`$cli show address $evse_plug_alias`
 #evse_wine=`$cli show address $evse_wine_alias`
 #evse_gena=`$cli show address $evse_gena_alias`
+#evse_rona=`$cli show address $evse_rona_alias`
 
 # Add whitelisting for adressbook
 #$cli call $addressbook_alias --entry add_whitelist --with $user_cool --force
@@ -82,6 +88,7 @@ $cli originate ./michelson/evseledger.tz   --named $evseledger_alias --init "(Pa
 #$cli call $addressbook_alias --entry addupdate_evse --as $user_cool --with "(\"WNPLUG\", $evse_plug, $admin, \"https://evsemanager.werenode.com\", 5000, $user_cool)" --force
 #$cli call $addressbook_alias --entry addupdate_evse --as $user_wine --with "(\"WNWine\", $evse_wine, $admin, \"https://evsemanager.werenode.com\", 5000, $user_wine)" --force
 #$cli call $addressbook_alias --entry addupdate_evse --as $user_cool --with "(\"WNGENA\", $evse_gena, $admin, \"https://evsemanager.werenode.com\", 5000, $user_cool)" --force
+#$cli call $addressbook_alias --entry addupdate_evse --as $user_cool --with "(\"WNRoNA\", $evse_rona, $admin, \"https://evsemanager.werenode.com\", 5000, $user_cool)" --force
 
 # Add services
 #$cli call $evse_gena_alias --entry addservice --with "(522, 2139)" --force
