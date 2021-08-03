@@ -2,7 +2,7 @@
 
 archetype token
 
-constant totalsupply : nat = 89_000_000_000_000_000
+constant totalsupply : nat = 89_500_000_000_000_000
 variable onetoken : nat = 1_000_000
 
 asset allowance identified by addr_owner addr_spender to big_map {
