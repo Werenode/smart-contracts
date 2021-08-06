@@ -17,6 +17,7 @@ asset evse to big_map {
 
 asset evsemanager {
   mng_addr   : address;
+  mng_id     : string;
   mng_server : bytes; // encrypted data to connect to evsemanager server
   evses      : aggregate<evse> = [];
 }
@@ -65,12 +66,13 @@ entry remove_evse (evse_ids : list<string>) {
   }
 }
 
-entry addupdate_evsemanager (addr     : address,
-                             server   : bytes) {
+entry addupdate_evsemanager (addr   : address,
+                             id     : string,
+                             server : bytes) {
   called by admin
   state is Running
   effect {
-    evsemanager.addupdate(addr, { mng_server = server });
+    evsemanager.addupdate(addr, { mng_server = server; mng_id = id });
   }
 }
 
