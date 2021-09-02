@@ -55,7 +55,7 @@ entry remove_evse (evse_ids : list<string>) {
   state is Running
   effect {
     for id in evse_ids do
-      dorequire(evse.contains(id), (id, "EVSE_NOT_EXISTS"));
+      dorequire(evse.contains(id), (id, "EVSE_DOES_NOT_EXIST"));
       var owner = evse[id].evse_owner;
       dorequire(owner = caller or admin = caller, ((owner, id), "CALLER_NOT_EVSE_OWNER"));
       var mng = evse[id].evse_mng;
